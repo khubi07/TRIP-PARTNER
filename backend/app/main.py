@@ -6,11 +6,13 @@ from fastapi import FastAPI, HTTPException, Query
 
 from app.agent.graph import assistant_graph
 from app.agent.model import MissingGeminiKeyError
+from app.agent.weather_event_graph import weather_event_graph
 from app.schemas.assistant import ChatRequest, ChatResponse
 from app.schemas.place import PlaceRecord
 from app.schemas.search import PlaceSearchResponse, SearchFilters
 from app.schemas.trip_context import TripContext
 from app.schemas.weather import WeatherForecast
+from app.schemas.weather_event import WeatherChangeEvent, WeatherEventResponse
 from app.services.place_search import place_search
 from app.services.weather import WeatherServiceError, weather_service
 
@@ -75,6 +77,44 @@ def get_weather_forecast(
         return weather_service.get_forecast(location, forecast_days=days)
     except WeatherServiceError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@app.post("/events/weather-change", response_model=WeatherEventResponse, tags=["events"])
+def handle_weather_change(event: WeatherChangeEvent) -> WeatherEventResponse:
+    """Evaluate a forecast-change event and draft an approval-gated alternative."""
+    trip_context = load_demo_trip_context()
+    if event.trip_id != trip_context.trip_id:
+        raise HTTPException(status_code=404, detail="Trip was not found.")
+
+    try:
+        state = weather_event_graph.invoke(
+            {
+                "event": event.model_dump(mode="json"),
+                "trip_context": trip_context.model_dump(mode="json"),
+            }
+        )
+    except MissingGeminiKeyError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="The weather-event workflow failed. Please retry shortly.",
+        ) from exc
+
+    affected_items = state.get("affected_items", [])
+    return WeatherEventResponse(
+        trip_id=event.trip_id,
+        forecast_date=event.forecast_date,
+        event_source=event.event_source,
+        status=state.get("status", "no_action"),
+        precipitation_change=state.get("precipitation_change", 0),
+        affected_item_ids=[item.get("item_id", "") for item in affected_items],
+        message=state.get("message", "No itinerary action was needed."),
+        suggested_alternative=state.get("suggested_alternative"),
+        citations=state.get("citations", []),
+        requires_guest_approval=state.get("requires_guest_approval", False),
+        llm_used=state.get("llm_used", False),
+    )
 
 
 @app.post("/assistant/chat", response_model=ChatResponse, tags=["assistant"])

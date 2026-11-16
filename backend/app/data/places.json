@@ -7,7 +7,12 @@
     "district": "East Khasi Hills",
     "summary": "A visitor-accessible limestone cave known for its formations and narrow passages.",
     "setting": "indoor",
-    "tags": ["cave", "limestone", "geology", "rainy-day-option"],
+    "tags": [
+      "cave",
+      "limestone",
+      "geology",
+      "rainy-day-option"
+    ],
     "source": {
       "title": "Mawsmai Caves | Meghalaya Tourism",
       "url": "https://www.meghalayatourism.in/explore/destinations/by-region/khasi-hills/mawsmai-cave/",
@@ -22,7 +27,12 @@
     "district": "East Khasi Hills",
     "summary": "A plunge waterfall near Sohra, viewed from the surrounding cliffs and viewpoints.",
     "setting": "outdoor",
-    "tags": ["waterfall", "viewpoint", "nature", "outdoor"],
+    "tags": [
+      "waterfall",
+      "viewpoint",
+      "nature",
+      "outdoor"
+    ],
     "source": {
       "title": "Nohkalikai | Meghalaya Tourism",
       "url": "https://www.meghalayatourism.in/explore/destinations/by-region/khasi-hills/nohkalikai/",
@@ -37,7 +47,12 @@
     "district": "East Khasi Hills",
     "summary": "A village known for its living root bridge, gardens, and Khasi cultural heritage.",
     "setting": "mixed",
-    "tags": ["village", "culture", "living-root-bridge", "nature"],
+    "tags": [
+      "village",
+      "culture",
+      "living-root-bridge",
+      "nature"
+    ],
     "source": {
       "title": "Mawlynnong | Meghalaya Tourism",
       "url": "https://www.meghalayatourism.in/explore/destinations/by-interest/living-root-bridges/mawlynnong/",
@@ -52,10 +67,36 @@
     "district": "West Jaintia Hills",
     "summary": "A river area where official Meghalaya tourism itineraries describe boating and riverside activities.",
     "setting": "outdoor",
-    "tags": ["river", "boating", "outdoor", "water-activity"],
+    "tags": [
+      "river",
+      "boating",
+      "outdoor",
+      "water-activity"
+    ],
     "source": {
       "title": "Relaxing Tour Across Meghalaya | Meghalaya Tourism",
       "url": "https://www.meghalayatourism.in/experiences/signature-trails/itineraries/3-day/relaxing-tour-meghalaya/",
+      "accessed_on": "2026-11-16"
+    }
+  },
+  {
+    "id": "arwah-cave",
+    "name": "Arwah Cave",
+    "category": "cave",
+    "area": "Sohra (Cherrapunji)",
+    "district": "East Khasi Hills",
+    "summary": "A fossil-rich limestone cave near Sohra with lit interior sections and a scenic outdoor approach path.",
+    "setting": "mixed",
+    "tags": [
+      "cave",
+      "fossils",
+      "limestone",
+      "nature",
+      "rainy-day-option"
+    ],
+    "source": {
+      "title": "Arwah Caves | Meghalaya Tourism",
+      "url": "https://www.meghalayatourism.in/explore/destinations/by-interest/cave-exploration/arwah-cave/",
       "accessed_on": "2026-11-16"
     }
   }
