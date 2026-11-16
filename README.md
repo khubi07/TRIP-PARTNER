@@ -2,35 +2,39 @@
 
 A context-aware AI trip concierge for Meghalaya. The MVP demonstrates grounded local recommendations, explicit tool routing, and weather-triggered itinerary adaptation.
 
-## First vertical slice
+## Current backend flow
 
-1. Load a fictional booking and build a typed trip context.
-2. Retrieve relevant, sourced places from a small curated Meghalaya dataset.
-3. Use a LangGraph workflow to choose local retrieval, a weather lookup, or a clarification question.
-4. Generate a day plan from retrieved candidates and require guest approval before saving changes.
-5. Simulate a weather-change event and suggest a sourced alternative when an outdoor itinerary item is affected.
-6. Evaluate retrieval quality, source correctness, and workflow/tool selection on fixed scenarios.
+1. `POST /assistant/chat` loads the fictional trip context and sends it with the guest message to the LangGraph workflow.
+2. A Gemini structured-output router chooses recommendation, itinerary, weather, or clarification.
+3. Recommendation and itinerary requests go through the BM25 local search service with metadata filters.
+4. Gemini drafts a response from the retrieved candidates. Source URLs are attached from the dataset, and generated citation IDs are restricted to retrieved place IDs.
+5. Weak retrieval returns a refinement prompt instead of asking Gemini to invent a place.
 
-The initial demo uses a manual weather event endpoint. A background scheduler, booking integration, WhatsApp, and live notification delivery are deferred until the core flow is working.
+The live weather route is deliberately a placeholder at this stage; the next tool integration will connect an actual forecast source. No booking integration, scheduler, WhatsApp, or delivery system is included yet.
 
-## Current implementation
-
-The FastAPI backend provides:
+## API endpoints
 
 - `GET /health`: process health check.
-- `GET /demo/trip-context`: loads fictional booking, preference, property, and itinerary data and validates it as `TripContext`.
-- `GET /places`: lists curated, source-attributed recommendations.
-- `GET /recommendations/search`: BM25 lexical search with optional `area`, `category`, and `setting` filters. Results include source metadata, matched query terms, a score, and a fallback response when evidence is weak.
-
-The schemas omit guest name, phone, and real booking data. The search baseline is intentionally lexical; embeddings and agent routing come after we measure this baseline on a fixed set of realistic queries.
+- `GET /demo/trip-context`: validated fictional booking and itinerary context.
+- `GET /places`: curated, source-attributed local records.
+- `GET /recommendations/search`: BM25 search with optional area, category, and setting filters.
+- `POST /assistant/chat`: LangGraph routing and grounded response workflow.
 
 ## Run locally
 
-Activate the existing virtual environment, then run these commands from `backend`:
+Activate the existing virtual environment and install dependencies:
 
 ```powershell
-python -m pip install -r ..\requirements.txt
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+Set `GOOGLE_API_KEY` in the local `.env` file. Optionally set `GEMINI_MODEL`; the default is `gemini-3.6-flash`. Never paste or commit secret values.
+
+Run from the `backend` directory:
+
+```powershell
 uvicorn app.main:app --reload
 ```
 
-Open `http://127.0.0.1:8000/docs` for interactive API documentation. Do not paste or commit secret values from `.env`.
+Open `http://127.0.0.1:8000/docs` for the interactive API docs. Try `POST /assistant/chat` with a JSON body such as `{"message":"Suggest a cave near me"}`.
