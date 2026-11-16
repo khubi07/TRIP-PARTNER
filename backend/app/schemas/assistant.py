@@ -8,7 +8,8 @@ class ChatRequest(StrictModel):
 
 
 class Citation(StrictModel):
-    place_id: str
+    source_id: str
+    source_type: str
     title: str
     url: str
 

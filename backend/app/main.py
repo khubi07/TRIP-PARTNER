@@ -10,7 +10,9 @@ from app.schemas.assistant import ChatRequest, ChatResponse
 from app.schemas.place import PlaceRecord
 from app.schemas.search import PlaceSearchResponse, SearchFilters
 from app.schemas.trip_context import TripContext
+from app.schemas.weather import WeatherForecast
 from app.services.place_search import place_search
+from app.services.weather import WeatherServiceError, weather_service
 
 app = FastAPI(
     title="tripPartner API",
@@ -61,6 +63,20 @@ def search_recommendations(
     )
 
 
+@app.get("/weather/forecast", response_model=WeatherForecast, tags=["weather"])
+def get_weather_forecast(
+    area: Annotated[str | None, Query(min_length=2, max_length=100)] = None,
+    days: Annotated[int, Query(ge=1, le=16)] = 7,
+) -> WeatherForecast:
+    """Fetch a forecast for an area, defaulting to the demo property's area."""
+    trip_context = load_demo_trip_context()
+    location = area or trip_context.property.area
+    try:
+        return weather_service.get_forecast(location, forecast_days=days)
+    except WeatherServiceError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
 @app.post("/assistant/chat", response_model=ChatResponse, tags=["assistant"])
 def chat(request: ChatRequest) -> ChatResponse:
     """Route a guest message through the LangGraph assistant workflow."""
@@ -71,6 +87,8 @@ def chat(request: ChatRequest) -> ChatResponse:
         )
     except MissingGeminiKeyError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except WeatherServiceError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
     except Exception as exc:
         # Keep provider/network details out of API responses and logs by default.
         raise HTTPException(

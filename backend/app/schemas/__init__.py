@@ -2,6 +2,7 @@ from .assistant import ChatRequest, ChatResponse, Citation
 from .place import PlaceRecord, PlaceSource
 from .search import PlaceSearchResponse, PlaceSearchResult, SearchFilters
 from .trip_context import GuestPreferences, ItineraryItemContext, PropertyContext, TripContext
+from .weather import WeatherDay, WeatherForecast
 
 __all__ = [
     "ChatRequest",
@@ -12,8 +13,9 @@ __all__ = [
     "PlaceRecord",
     "PlaceSearchResponse",
     "PlaceSearchResult",
-    "PlaceSource",
     "PropertyContext",
     "SearchFilters",
     "TripContext",
+    "WeatherDay",
+    "WeatherForecast",
 ]
