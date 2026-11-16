@@ -1,0 +1,46 @@
+{
+  "trip_id": "trip-demo-001",
+  "booking_reference": "DEMO-2048",
+  "check_in": "2027-01-15",
+  "check_out": "2027-01-18",
+  "guest_count": 2,
+  "property": {
+    "name": "Sample Sohra Stay",
+    "area": "Sohra (Cherrapunji)",
+    "latitude": null,
+    "longitude": null,
+    "check_in_time": "14:00:00",
+    "check_out_time": "11:00:00"
+  },
+  "preferences": {
+    "dietary_preferences": ["vegetarian"],
+    "interests": ["caves", "waterfalls", "local culture"],
+    "preferred_vibe": ["quiet", "nature"]
+  },
+  "itinerary": [
+    {
+      "item_id": "item-demo-001",
+      "date": "2027-01-16",
+      "start_time": "09:00:00",
+      "end_time": "11:00:00",
+      "title": "Visit Mawsmai Cave",
+      "place_id": "mawsmai-cave",
+      "area": "Sohra (Cherrapunji)",
+      "category": "cave",
+      "setting": "indoor",
+      "status": "approved"
+    },
+    {
+      "item_id": "item-demo-002",
+      "date": "2027-01-16",
+      "start_time": "13:00:00",
+      "end_time": "15:00:00",
+      "title": "Nohkalikai Falls viewpoint",
+      "place_id": "nohkalikai-falls",
+      "area": "Near Sohra (Cherrapunji)",
+      "category": "waterfall",
+      "setting": "outdoor",
+      "status": "approved"
+    }
+  ]
+}

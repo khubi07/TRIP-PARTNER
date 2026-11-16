@@ -1,0 +1,62 @@
+[
+  {
+    "id": "mawsmai-cave",
+    "name": "Mawsmai Cave",
+    "category": "cave",
+    "area": "Sohra (Cherrapunji)",
+    "district": "East Khasi Hills",
+    "summary": "A visitor-accessible limestone cave known for its formations and narrow passages.",
+    "setting": "indoor",
+    "tags": ["cave", "limestone", "geology", "rainy-day-option"],
+    "source": {
+      "title": "Mawsmai Caves | Meghalaya Tourism",
+      "url": "https://www.meghalayatourism.in/explore/destinations/by-region/khasi-hills/mawsmai-cave/",
+      "accessed_on": "2026-11-16"
+    }
+  },
+  {
+    "id": "nohkalikai-falls",
+    "name": "Nohkalikai Falls",
+    "category": "waterfall",
+    "area": "Near Sohra (Cherrapunji)",
+    "district": "East Khasi Hills",
+    "summary": "A plunge waterfall near Sohra, viewed from the surrounding cliffs and viewpoints.",
+    "setting": "outdoor",
+    "tags": ["waterfall", "viewpoint", "nature", "outdoor"],
+    "source": {
+      "title": "Nohkalikai | Meghalaya Tourism",
+      "url": "https://www.meghalayatourism.in/explore/destinations/by-region/khasi-hills/nohkalikai/",
+      "accessed_on": "2026-11-16"
+    }
+  },
+  {
+    "id": "mawlynnong-village",
+    "name": "Mawlynnong Village",
+    "category": "village",
+    "area": "Mawlynnong",
+    "district": "East Khasi Hills",
+    "summary": "A village known for its living root bridge, gardens, and Khasi cultural heritage.",
+    "setting": "mixed",
+    "tags": ["village", "culture", "living-root-bridge", "nature"],
+    "source": {
+      "title": "Mawlynnong | Meghalaya Tourism",
+      "url": "https://www.meghalayatourism.in/explore/destinations/by-interest/living-root-bridges/mawlynnong/",
+      "accessed_on": "2026-11-16"
+    }
+  },
+  {
+    "id": "dawki-umngot-river",
+    "name": "Dawki (Umngot River)",
+    "category": "river_activity",
+    "area": "Dawki and Shnongpdeng",
+    "district": "West Jaintia Hills",
+    "summary": "A river area where official Meghalaya tourism itineraries describe boating and riverside activities.",
+    "setting": "outdoor",
+    "tags": ["river", "boating", "outdoor", "water-activity"],
+    "source": {
+      "title": "Relaxing Tour Across Meghalaya | Meghalaya Tourism",
+      "url": "https://www.meghalayatourism.in/experiences/signature-trails/itineraries/3-day/relaxing-tour-meghalaya/",
+      "accessed_on": "2026-11-16"
+    }
+  }
+]
