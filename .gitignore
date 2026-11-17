@@ -1,3 +1,19 @@
-.venv
+# Virtual environments
+.venv/
+venv/
+# Secrets
 .env
+.env.*
+!.env.example
+
 notes.txt
+
+# Local SQLite database and sidecar files
+backend/app/data/*.sqlite3
+backend/app/data/*.sqlite3-shm
+backend/app/data/*.sqlite3-wal
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class

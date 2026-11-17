@@ -27,6 +27,7 @@ class WeatherAlternative(StrictModel):
 
 
 class WeatherEventResponse(StrictModel):
+    event_id: str
     trip_id: str
     forecast_date: date
     event_source: Literal["simulated", "open_meteo"]
@@ -38,3 +39,8 @@ class WeatherEventResponse(StrictModel):
     citations: list[Citation] = Field(default_factory=list)
     requires_guest_approval: bool = False
     llm_used: bool = False
+    approval_status: Literal["pending", "approved", "rejected"] | None = None
+
+
+class WeatherEventDecision(StrictModel):
+    decision: Literal["approve", "reject"]

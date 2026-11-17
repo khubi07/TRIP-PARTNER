@@ -1,4 +1,5 @@
 import json
+from uuid import uuid4
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -12,8 +13,13 @@ from app.schemas.place import PlaceRecord
 from app.schemas.search import PlaceSearchResponse, SearchFilters
 from app.schemas.trip_context import TripContext
 from app.schemas.weather import WeatherForecast
-from app.schemas.weather_event import WeatherChangeEvent, WeatherEventResponse
+from app.schemas.weather_event import (
+    WeatherChangeEvent,
+    WeatherEventDecision,
+    WeatherEventResponse,
+)
 from app.services.place_search import place_search
+from app.services.trip_store import trip_store
 from app.services.weather import WeatherServiceError, weather_service
 
 app = FastAPI(
@@ -27,7 +33,8 @@ DATA_DIR = Path(__file__).parent / "data"
 
 def load_demo_trip_context() -> TripContext:
     raw_context = json.loads((DATA_DIR / "demo_trip_context.json").read_text(encoding="utf-8"))
-    return TripContext.model_validate(raw_context)
+    seed_context = TripContext.model_validate(raw_context)
+    return trip_store.get_trip_context(seed_context)
 
 
 @app.get("/health", tags=["system"])
@@ -102,7 +109,8 @@ def handle_weather_change(event: WeatherChangeEvent) -> WeatherEventResponse:
         ) from exc
 
     affected_items = state.get("affected_items", [])
-    return WeatherEventResponse(
+    response = WeatherEventResponse(
+        event_id=str(uuid4()),
         trip_id=event.trip_id,
         forecast_date=event.forecast_date,
         event_source=event.event_source,
@@ -114,7 +122,32 @@ def handle_weather_change(event: WeatherChangeEvent) -> WeatherEventResponse:
         citations=state.get("citations", []),
         requires_guest_approval=state.get("requires_guest_approval", False),
         llm_used=state.get("llm_used", False),
+        approval_status=("pending" if state.get("requires_guest_approval") else None),
     )
+    trip_store.save_weather_event(
+        response.event_id,
+        response.trip_id,
+        response.model_dump(mode="json"),
+    )
+    return response
+
+
+@app.post(
+    "/events/weather-change/{event_id}/decision",
+    response_model=WeatherEventResponse,
+    tags=["events"],
+)
+def decide_weather_change(
+    event_id: str, decision: WeatherEventDecision
+) -> WeatherEventResponse:
+    """Approve a proposed replacement or decline it without changing the trip."""
+    try:
+        response = trip_store.decide_weather_event(event_id, decision.decision)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if response is None:
+        raise HTTPException(status_code=404, detail="Weather suggestion was not found.")
+    return WeatherEventResponse.model_validate(response)
 
 
 @app.post("/assistant/chat", response_model=ChatResponse, tags=["assistant"])
