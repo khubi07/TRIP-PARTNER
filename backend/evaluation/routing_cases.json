@@ -1,0 +1,8 @@
+[
+  {"name": "place recommendation", "query": "Suggest a cave near me", "expected_intent": "recommendation"},
+  {"name": "trip planning", "query": "Plan a three-day Meghalaya itinerary", "expected_intent": "itinerary"},
+  {"name": "weather lookup", "query": "Will it rain in Sohra tomorrow?", "expected_intent": "weather"},
+  {"name": "ambiguous request", "query": "Can you help me?", "expected_intent": "clarification"},
+  {"name": "weather-driven change", "query": "The forecast changed; what should I do about tomorrow's outdoor plan?", "expected_intent": "weather"},
+  {"name": "specific activity recommendation", "query": "Find me an outdoor waterfall around Sohra", "expected_intent": "recommendation"}
+]

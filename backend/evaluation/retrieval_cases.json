@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Sohra fossils cave",
+    "query": "fossils cave Sohra",
+    "filters": {"area": "Sohra", "category": "cave"},
+    "expected_place_ids": ["arwah-cave"]
+  },
+  {
+    "name": "Mawlynnong root bridge",
+    "query": "living root bridge village Mawlynnong",
+    "filters": {},
+    "expected_place_ids": ["mawlynnong-village"]
+  },
+  {
+    "name": "Nohkalikai waterfall",
+    "query": "Nohkalikai waterfall viewpoint",
+    "filters": {"category": "waterfall"},
+    "expected_place_ids": ["nohkalikai-falls"]
+  },
+  {
+    "name": "Dawki river boating",
+    "query": "Dawki Umngot boating river",
+    "filters": {"category": "river_activity"},
+    "expected_place_ids": ["dawki-umngot-river"]
+  },
+  {
+    "name": "Sohra limestone caves",
+    "query": "limestone cave Sohra",
+    "filters": {"area": "Sohra", "category": "cave"},
+    "expected_place_ids": ["mawsmai-cave", "arwah-cave"]
+  },
+  {
+    "name": "Indoor cave in rain",
+    "query": "rainy day indoor cave fossils",
+    "filters": {"category": "cave"},
+    "expected_place_ids": ["mawsmai-cave", "arwah-cave"]
+  },
+  {
+    "name": "No matching cuisine",
+    "query": "sushi in Shillong",
+    "filters": {},
+    "expected_place_ids": []
+  }
+]

@@ -66,3 +66,9 @@ Run from the `backend` directory:
 ```
 
 Open `http://127.0.0.1:8000/docs` for the interactive API docs.
+
+## Testing and evaluation
+
+Install the test dependency from the project root with `python -m pip install -r requirements-dev.txt`. From `backend`, run `..\.venv\Scripts\python.exe -m pytest` for local deterministic tests. Run `..\.venv\Scripts\python.exe -m evaluation.run_retrieval_eval` for the BM25 Precision@3, Recall@3, MRR@3, and abstention baseline.
+
+`..\.venv\Scripts\python.exe -m evaluation.run_routing_eval` sends one Gemini request per case in `backend/evaluation/routing_cases.json`; it requires `GOOGLE_API_KEY` and may consume API quota. The regular pytest suite does not call Gemini or Open-Meteo.
