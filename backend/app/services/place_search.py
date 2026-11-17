@@ -14,8 +14,9 @@ from app.schemas.search import (
 _DATA_PATH = Path(__file__).parents[1] / "data" / "places.json"
 _STOP_WORDS = {
     "a", "an", "and", "are", "best", "can", "do", "for", "good", "i",
-    "in", "is", "me", "my", "of", "or", "place", "places", "recommend",
+    "from", "in", "is", "me", "my", "of", "or", "place", "places", "recommend",
     "recommendation", "recommendations", "the", "to", "visit", "we", "what",
+    "where",
     "with",
 }
 

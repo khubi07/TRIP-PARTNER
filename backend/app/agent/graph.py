@@ -6,6 +6,7 @@ from langgraph.graph import END, START, StateGraph
 from app.agent.model import get_chat_model
 from app.agent.schemas import AnswerDraft, RouteDecision, WeatherAnswerDraft
 from app.schemas.search import SearchFilters
+from app.services.itinerary_validation import validate_itinerary_draft
 from app.services.place_search import place_search
 from app.services.weather import weather_service
 
@@ -18,6 +19,7 @@ class TripAssistantState(TypedDict, total=False):
     candidates: list[dict[str, Any]]
     answer: str
     citations: list[dict[str, str]]
+    itinerary: list[dict[str, Any]]
     weather: dict[str, Any]
     needs_refinement: bool
     fallback_message: str | None
@@ -42,10 +44,10 @@ invent places or claim to have checked live weather."""
 ANSWER_PROMPT = """You are tripPartner, a careful Meghalaya trip concierge.
 Use only the candidate records below for place-specific facts. Do not invent places,
 prices, opening hours, travel times, availability, or weather. Personalize using the
-trip context when relevant. For itinerary requests, arrange only supplied candidate
-places into a practical high-level suggestion; do not claim route times or guarantee
-feasibility. Ask for refinement if the evidence is insufficient. Return citations by
-using candidate place IDs only. Keep the answer concise and useful."""
+trip context when relevant. For itinerary requests, populate itinerary_items using
+candidate place IDs only, dates inside the booked trip, and optional non-overlapping
+time blocks. Do not claim route times or guarantee feasibility. Keep message concise;
+the application will render the validated itinerary and citations."""
 
 WEATHER_PROMPT = """You are tripPartner, a careful trip concierge. Answer from the supplied
 Open-Meteo forecast only. Preserve the resolved location, local forecast dates,
@@ -168,11 +170,45 @@ def draft_answer(state: TripAssistantState) -> dict[str, Any]:
     )
 
     records_by_id = {record["id"]: record for record in candidates}
-    valid_ids = list(dict.fromkeys(
-        place_id
-        for place_id in draft_data["cited_place_ids"]
-        if place_id in records_by_id
-    ))
+    itinerary_items: list[dict[str, Any]] = []
+    answer_text = draft_data["message"]
+    if intent == "itinerary":
+        itinerary_items = draft_data.get("itinerary_items", [])
+        validation_errors = validate_itinerary_draft(
+            itinerary_items,
+            context,
+            records_by_id,
+        )
+        if not itinerary_items:
+            validation_errors.append("No itinerary stops were returned.")
+        if validation_errors:
+            return {
+                "answer": (
+                    "I couldn't validate the proposed stops against the local places "
+                    "and your trip dates, so I haven't returned an itinerary. Please "
+                    "try again with the number of days or area you want to explore."
+                ),
+                "citations": [],
+                "itinerary": [],
+                "needs_refinement": True,
+                "fallback_message": "; ".join(validation_errors),
+            }
+        itinerary_items = [
+            {
+                **item,
+                "title": records_by_id[item["place_id"]]["name"],
+                "area": records_by_id[item["place_id"]]["area"],
+            }
+            for item in itinerary_items
+        ]
+        valid_ids = list(dict.fromkeys(item["place_id"] for item in itinerary_items))
+        answer_text = _format_itinerary(itinerary_items, records_by_id)
+    else:
+        valid_ids = list(dict.fromkeys(
+            place_id
+            for place_id in draft_data["cited_place_ids"]
+            if place_id in records_by_id
+        ))
     if not valid_ids:
         valid_ids = list(records_by_id)
     citations = [
@@ -185,10 +221,32 @@ def draft_answer(state: TripAssistantState) -> dict[str, Any]:
         for place_id in valid_ids
     ]
     return {
-        "answer": draft_data["message"],
+        "answer": answer_text,
         "citations": citations,
+        "itinerary": itinerary_items,
         "needs_refinement": False,
     }
+
+
+def _format_itinerary(
+    items: list[dict[str, Any]],
+    records_by_id: dict[str, dict[str, Any]],
+) -> str:
+    """Render only validated place records and proposed schedule blocks."""
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for item in items:
+        grouped.setdefault(item["date"], []).append(item)
+    lines = ["Here’s a draft itinerary using places from the local guide:"]
+    for day_index, (day, day_items) in enumerate(sorted(grouped.items()), start=1):
+        lines.extend(["", f"Day {day_index} · {day}"])
+        for item in sorted(day_items, key=lambda entry: entry.get("start_time") or "00:00"):
+            record = records_by_id[item["place_id"]]
+            start = item.get("start_time")
+            end = item.get("end_time")
+            time_range = f"{start[:5]}–{end[:5]} · " if start and end else ""
+            lines.append(f"{time_range}{record['name']} — {record['area']}")
+    lines.extend(["", "Times are suggested blocks; confirm opening hours and transport locally."])
+    return "\n".join(lines)
 
 
 def lookup_weather(state: TripAssistantState) -> dict[str, Any]:

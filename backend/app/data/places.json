@@ -99,5 +99,53 @@
       "url": "https://www.meghalayatourism.in/explore/destinations/by-interest/cave-exploration/arwah-cave/",
       "accessed_on": "2026-11-16"
     }
+  },
+  {
+    "id": "orange-roots",
+    "name": "Orange Roots",
+    "category": "restaurant",
+    "area": "Sohra (Cherrapunji)",
+    "district": "East Khasi Hills",
+    "summary": "A pure vegetarian restaurant serving thalis, combo meals, Indian breakfast, dosa, snacks, and Jain food.",
+    "setting": "indoor",
+    "tags": [
+      "restaurant",
+      "vegetarian",
+      "pure-veg",
+      "jain",
+      "thali",
+      "dosa",
+      "indian",
+      "breakfast",
+      "dinner"
+    ],
+    "source": {
+      "title": "Orange Roots | Cherrapunjee Holiday Resort",
+      "url": "https://cherrapunjee.com/orange-roots/",
+      "accessed_on": "2026-11-17"
+    }
+  },
+  {
+    "id": "sohra-house",
+    "name": "Sohra House",
+    "category": "restaurant",
+    "area": "Sohra (Cherrapunji)",
+    "district": "East Khasi Hills",
+    "summary": "A multi-cuisine restaurant serving Khasi, local, continental, and Indian dishes in a cliffside setting.",
+    "setting": "mixed",
+    "tags": [
+      "restaurant",
+      "dinner",
+      "khasi",
+      "local-cuisine",
+      "indian",
+      "continental",
+      "cliffside"
+    ],
+    "source": {
+      "title": "Dining at Polo Resort, Cherrapunji",
+      "url": "https://www.polohotelsandresorts.com/cherrapunji/dining",
+      "accessed_on": "2026-11-17"
+    }
   }
 ]

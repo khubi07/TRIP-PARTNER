@@ -15,7 +15,7 @@ class PlaceSource(StrictModel):
 class PlaceRecord(StrictModel):
     id: str
     name: str
-    category: Literal["cave", "waterfall", "village", "river_activity"]
+    category: Literal["cave", "waterfall", "village", "river_activity", "restaurant"]
     area: str
     district: str
     summary: str

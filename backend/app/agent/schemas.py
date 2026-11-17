@@ -1,3 +1,4 @@
+from datetime import date, time
 from typing import Literal
 
 from pydantic import Field
@@ -12,9 +13,18 @@ class RouteDecision(StrictModel):
     retrieval_query: str = Field(default="", max_length=300)
     area: str | None = Field(default=None, max_length=100)
     weather_location: str | None = Field(default=None, max_length=100)
-    category: Literal["cave", "waterfall", "village", "river_activity"] | None = None
+    category: Literal["cave", "waterfall", "village", "river_activity", "restaurant"] | None = None
     setting: Literal["indoor", "outdoor", "mixed"] | None = None
     clarification_question: str = Field(default="", max_length=300)
+
+
+class ItineraryDraftItem(StrictModel):
+    """A proposed stop that must resolve to one retrieved local place record."""
+
+    date: date
+    place_id: str = Field(min_length=1, max_length=100)
+    start_time: time | None = None
+    end_time: time | None = None
 
 
 class AnswerDraft(StrictModel):
@@ -22,6 +32,7 @@ class AnswerDraft(StrictModel):
 
     message: str = Field(min_length=1, max_length=2000)
     cited_place_ids: list[str] = Field(default_factory=list)
+    itinerary_items: list[ItineraryDraftItem] = Field(default_factory=list)
 
 
 class WeatherAnswerDraft(StrictModel):

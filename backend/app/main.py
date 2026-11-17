@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Annotated, Literal
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 
 from app.agent.graph import assistant_graph
 from app.agent.model import MissingGeminiKeyError
@@ -173,6 +174,15 @@ def chat(request: ChatRequest) -> ChatResponse:
         intent=state.get("intent", "clarification"),
         answer=state.get("answer", "I couldn't complete that request."),
         citations=state.get("citations", []),
+        itinerary=state.get("itinerary", []),
         needs_refinement=state.get("needs_refinement", False),
         fallback_message=state.get("fallback_message"),
     )
+
+
+# Serve the production Vite build when it exists. During development, Vite runs
+# separately on port 5173 and proxies API requests to this FastAPI process.
+FRONTEND_BUILD_DIR = Path(__file__).parent / "static"
+if FRONTEND_BUILD_DIR.is_dir():
+    # Mount last so the SPA does not shadow API routes or /docs.
+    app.mount("/", StaticFiles(directory=FRONTEND_BUILD_DIR, html=True), name="frontend")

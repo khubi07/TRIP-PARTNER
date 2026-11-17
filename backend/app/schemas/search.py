@@ -10,7 +10,7 @@ class SearchFilters(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     area: str | None = None
-    category: Literal["cave", "waterfall", "village", "river_activity"] | None = None
+    category: Literal["cave", "waterfall", "village", "river_activity", "restaurant"] | None = None
     setting: Literal["indoor", "outdoor", "mixed"] | None = None
 
 

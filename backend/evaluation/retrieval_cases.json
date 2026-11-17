@@ -1,44 +1,104 @@
 [
   {
-    "name": "Sohra fossils cave",
+    "name": "fossil cave near Sohra",
     "query": "fossils cave Sohra",
     "filters": {"area": "Sohra", "category": "cave"},
-    "expected_place_ids": ["arwah-cave"]
+    "relevance": {"arwah-cave": 3, "mawsmai-cave": 1}
   },
   {
-    "name": "Mawlynnong root bridge",
-    "query": "living root bridge village Mawlynnong",
+    "name": "living root bridge",
+    "query": "Where can I see a living root bridge?",
     "filters": {},
-    "expected_place_ids": ["mawlynnong-village"]
+    "relevance": {"mawlynnong-village": 3}
   },
   {
-    "name": "Nohkalikai waterfall",
+    "name": "waterfall viewpoint",
     "query": "Nohkalikai waterfall viewpoint",
     "filters": {"category": "waterfall"},
-    "expected_place_ids": ["nohkalikai-falls"]
+    "relevance": {"nohkalikai-falls": 3}
   },
   {
-    "name": "Dawki river boating",
-    "query": "Dawki Umngot boating river",
+    "name": "boating on the Umngot",
+    "query": "Can we take a boat on the Umngot river near Dawki?",
     "filters": {"category": "river_activity"},
-    "expected_place_ids": ["dawki-umngot-river"]
+    "relevance": {"dawki-umngot-river": 3}
   },
   {
-    "name": "Sohra limestone caves",
+    "name": "limestone caves in Sohra",
     "query": "limestone cave Sohra",
     "filters": {"area": "Sohra", "category": "cave"},
-    "expected_place_ids": ["mawsmai-cave", "arwah-cave"]
+    "relevance": {"mawsmai-cave": 3, "arwah-cave": 3}
   },
   {
-    "name": "Indoor cave in rain",
-    "query": "rainy day indoor cave fossils",
+    "name": "cave for a rainy day",
+    "query": "What cave could we visit if it rains?",
     "filters": {"category": "cave"},
-    "expected_place_ids": ["mawsmai-cave", "arwah-cave"]
+    "relevance": {"mawsmai-cave": 3, "arwah-cave": 2}
   },
   {
-    "name": "No matching cuisine",
+    "name": "village and Khasi culture",
+    "query": "quiet village to experience Khasi culture",
+    "filters": {"category": "village"},
+    "relevance": {"mawlynnong-village": 3}
+  },
+  {
+    "name": "outdoor waterfall near Sohra",
+    "query": "Find an outdoor waterfall around Sohra",
+    "filters": {"category": "waterfall", "setting": "outdoor"},
+    "relevance": {"nohkalikai-falls": 3}
+  },
+  {
+    "name": "river activity in Dawki",
+    "query": "river activities and boating in Dawki",
+    "filters": {"area": "Dawki", "category": "river_activity"},
+    "relevance": {"dawki-umngot-river": 3}
+  },
+  {
+    "name": "geology and fossils",
+    "query": "I am interested in fossils and geology",
+    "filters": {},
+    "relevance": {"arwah-cave": 3, "mawsmai-cave": 1}
+  },
+  {
+    "name": "scenic nature around Sohra",
+    "query": "nature and scenic views near Cherrapunji",
+    "filters": {"area": "Sohra"},
+    "relevance": {"nohkalikai-falls": 3, "arwah-cave": 2, "mawsmai-cave": 1}
+  },
+  {
+    "name": "unsupported cuisine request",
     "query": "sushi in Shillong",
     "filters": {},
-    "expected_place_ids": []
+    "relevance": {}
+  },
+  {
+    "name": "unsupported transport request",
+    "query": "book a taxi from the airport",
+    "filters": {},
+    "relevance": {}
+  },
+  {
+    "name": "no village in Dawki filter",
+    "query": "village and culture",
+    "filters": {"area": "Dawki", "category": "village"},
+    "relevance": {}
+  },
+  {
+    "name": "vegetarian dinner near Sohra",
+    "query": "quiet dinner place near Sohra with vegetarian options",
+    "filters": {"area": "Sohra", "category": "restaurant"},
+    "relevance": {"orange-roots": 3}
+  },
+  {
+    "name": "Jain meal and dosa",
+    "query": "pure vegetarian Jain food dosa thali",
+    "filters": {"category": "restaurant"},
+    "relevance": {"orange-roots": 3}
+  },
+  {
+    "name": "Khasi local dinner",
+    "query": "restaurant serving Khasi local cuisine for dinner",
+    "filters": {"area": "Sohra", "category": "restaurant"},
+    "relevance": {"sohra-house": 3}
   }
 ]

@@ -12,7 +12,7 @@ Run the small BM25 retrieval benchmark from the same directory:
 ..\.venv\Scripts\python.exe -m evaluation.run_retrieval_eval
 ```
 
-The retrieval cases are manually labeled examples, not a representative production benchmark. The evaluator reports Precision@3, Recall@3, MRR@3, and whether the system correctly abstains on an unsupported query. It makes no network calls.
+The retrieval cases are manually labeled examples, not a representative production benchmark. There are 17 cases with relevance grades from 1 (somewhat relevant) to 3 (strongly relevant); an empty relevance map means no supported result is expected. The evaluator reports Precision@3, Recall@3, MRR@3, nDCG@3, and abstention accuracy. It makes no network calls.
 
 Run the live routing evaluation only when you want to spend Gemini API quota. It makes one routing call per case (currently six):
 
@@ -22,4 +22,4 @@ Run the live routing evaluation only when you want to spend Gemini API quota. It
 
 The routing cases are also a small manually labeled smoke set, not a production quality estimate. This checks route selection only; it does not evaluate response grounding or weather API behavior.
 
-The retrieval benchmark currently has perfect recall and MRR because each expected result appears in the top three. Precision@3 is lower because several queries return fewer than three results, with missing slots counted as non-relevant; this is a tiny curated dataset, so treat the figures as a baseline for regression checks rather than a quality claim.
+Precision@3 uses three as the denominator, so returning fewer than three results lowers the score. nDCG uses graded labels and evaluates ranking order. Both are only meaningful relative to the current hand-labeled cases; use them as regression signals, not a production quality claim. Update the labels when the curated dataset or intended product behavior changes.
