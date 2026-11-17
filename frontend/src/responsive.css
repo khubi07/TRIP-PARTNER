@@ -1,0 +1,36 @@
+.mobile-trip-strip {
+  display: none;
+}
+
+@media (max-width: 650px) {
+  body {
+    min-width: 0;
+  }
+
+  .mobile-trip-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 9px 18px;
+    border-bottom: 1px solid #eceee8;
+    background: #f6f7f2;
+  }
+  .mobile-trip-strip strong {
+    color: #34463a;
+    font-size: 10px;
+  }
+  .mobile-trip-strip span {
+    color: #78837a;
+    font-size: 9px;
+  }
+  .welcome-block h2 {
+    font-size: clamp(30px, 9vw, 38px);
+    letter-spacing: -1.8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .topbar-context > span:last-child {
+    display: none;
+  }
+}

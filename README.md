@@ -7,15 +7,17 @@ A context-aware AI trip concierge for Meghalaya. The MVP demonstrates grounded l
 1. `POST /assistant/chat` loads the fictional trip context and sends it with the guest message to LangGraph.
 2. A Gemini structured-output router chooses recommendation, itinerary, weather, or clarification.
 3. Recommendation and itinerary requests go through the BM25 local search service with metadata filters.
-4. Weather questions use the Open-Meteo geocoding and forecast APIs; Gemini summarizes the normalized forecast.
-5. `POST /events/weather-change` accepts a forecast-change event. Deterministic rules check whether rain risk rose enough and an outdoor itinerary item is scheduled for that date.
-6. Only an impactful event searches for an unscheduled local cave alternative and calls Gemini to draft an approval-gated suggestion.
-7. The demo trip and weather suggestions are stored in a local SQLite database. A guest can approve or reject a suggestion; approval updates the persisted itinerary, while rejection leaves it unchanged.
+4. The itinerary node returns structured stop IDs, dates and optional times. A deterministic validator rejects stops outside the trip, stops absent from retrieved candidates, malformed schedules and overlapping time blocks before the UI presents the plan.
+5. Weather questions use the Open-Meteo geocoding and forecast APIs; Gemini summarizes the normalized forecast.
+6. `POST /events/weather-change` accepts a forecast-change event. Deterministic rules check whether rain risk rose enough and an outdoor itinerary item is scheduled for that date.
+7. Only an impactful event searches for an unscheduled local cave alternative and calls Gemini to draft an approval-gated suggestion.
+8. The demo trip and weather suggestions are stored in a local SQLite database. A guest can approve or reject a suggestion; approval updates the persisted itinerary, while rejection leaves it unchanged.
 
 The weather-change endpoint is a manually triggered event simulation; no scheduler or forecast monitor emits events yet. Open-Meteo free use is non-commercial and requires attribution.
 
 ## API endpoints
 
+- `GET /`: responsive web chat served by FastAPI when a production frontend build exists.
 - `GET /health`: process health check.
 - `GET /demo/trip-context`: validated fictional booking and itinerary context.
 - `GET /places`: curated, source-attributed local records.
@@ -66,6 +68,27 @@ Run from the `backend` directory:
 ```
 
 Open `http://127.0.0.1:8000/docs` for the interactive API docs.
+
+## React frontend
+
+The frontend is a React + TypeScript app built with Vite. During development, run the backend and frontend in separate terminals:
+
+Terminal 1, from `backend`:
+
+```powershell
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
+```
+
+Terminal 2, from `frontend`:
+
+```powershell
+npm install
+npm run dev
+```
+
+Open `http://127.0.0.1:5173/`. Vite proxies API requests to FastAPI on port 8000. For a production-style local run, execute `npm run build` from `frontend`, restart FastAPI, and open `http://127.0.0.1:8000/`.
+
+The UI reads the fictional booking context, sends chat requests to `/assistant/chat`, and lets you simulate a rain-change event and approve or reject the proposed itinerary change. The transcript is currently displayed in the browser but is not sent as conversation history; each chat message is handled as a separate request with the demo trip context.
 
 ## Testing and evaluation
 

@@ -17,3 +17,8 @@ backend/app/data/*.sqlite3-wal
 __pycache__/
 *.py[cod]
 *$py.class
+
+# React/Vite build artifacts
+frontend/node_modules/
+frontend/dist/
+backend/app/static/
