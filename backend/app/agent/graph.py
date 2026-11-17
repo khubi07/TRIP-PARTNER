@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import END, START, StateGraph
 
 from app.agent.model import get_chat_model
-from app.agent.schemas import AnswerDraft, RouteDecision, WeatherAnswerDraft
+from app.agent.schemas import AnswerDraft, WeatherAnswerDraft
 from app.schemas.search import SearchFilters
 from app.services.itinerary_validation import validate_itinerary_draft
 from app.services.place_search import place_search
@@ -25,22 +25,6 @@ class TripAssistantState(TypedDict, total=False):
     fallback_message: str | None
 
 
-ROUTER_PROMPT = """You route requests for tripPartner, a Meghalaya trip concierge.
-Choose exactly one intent:
-- recommendation: ask for a place, activity, food, or local suggestion
-- itinerary: ask to plan or organize multiple trip activities
-- weather: ask for weather or a weather-based change
-- clarification: not enough information to safely choose another intent
-
-Use the provided trip context. For recommendations, set retrieval_query to a short
-keyword query suited to the local catalogue; use the booked property's area when
-'near me' is implied. For weather, use the explicitly named area or the booked
-property's area if the guest asks about their trip. For itinerary requests, make
-retrieval_query broad enough for the local catalogue (for example: cave waterfall
-village river). Use area, category, and setting only when supported. If key intent
-or location is unclear, choose clarification and ask one concise question. Do not
-invent places or claim to have checked live weather."""
-
 ANSWER_PROMPT = """You are tripPartner, a careful Meghalaya trip concierge.
 Use only the candidate records below for place-specific facts. Do not invent places,
 prices, opening hours, travel times, availability, or weather. Personalize using the
@@ -59,24 +43,39 @@ this workflow does not modify an itinerary yet. Mention that the data is a forec
 
 def route_request(state: TripAssistantState) -> dict[str, Any]:
     context = state.get("trip_context", {})
-    query = state.get("query", "")
-    model = get_chat_model().with_structured_output(RouteDecision)
-    decision = model.invoke(
-        [
-            SystemMessage(content=ROUTER_PROMPT),
-            HumanMessage(
-                content=(
-                    f"Trip context (JSON): {context}\n"
-                    f"Guest request: {query}"
-                )
-            ),
-        ]
+    query = state.get("query", "").strip()
+    normalized = query.casefold()
+    weather_terms = ("weather", "forecast", "rain", "raining", "temperature")
+    itinerary_terms = ("itinerary", "plan", "schedule", "organize", "three-day", "3-day", "3 day")
+    intent = (
+        "weather" if any(term in normalized for term in weather_terms)
+        else "itinerary" if any(term in normalized for term in itinerary_terms)
+        else "clarification" if len(normalized.split()) < 3
+        else "recommendation"
     )
-    decision_data = (
-        decision
-        if isinstance(decision, dict)
-        else decision.model_dump(mode="json")
-    )
+    category = None
+    if any(term in normalized for term in ("restaurant", "dinner", "food", "eat", "vegetarian", "jain")):
+        category = "restaurant"
+    elif any(term in normalized for term in ("cave", "caves")):
+        category = "cave"
+    elif any(term in normalized for term in ("waterfall", "falls")):
+        category = "waterfall"
+    elif any(term in normalized for term in ("village", "culture", "root bridge")):
+        category = "village"
+    elif any(term in normalized for term in ("river", "boating", "boat")):
+        category = "river_activity"
+    area = next((name for name in ("Sohra", "Cherrapunji", "Shillong", "Dawki", "Mawlynnong") if name.casefold() in normalized), None)
+    if not area and ("near me" in normalized or "nearby" in normalized):
+        area = context.get("property", {}).get("area")
+    decision_data = {
+        "intent": intent,
+        "retrieval_query": query if intent != "itinerary" else "cave waterfall village river",
+        "area": area,
+        "weather_location": area,
+        "category": category if intent == "recommendation" else None,
+        "setting": "indoor" if any(term in normalized for term in ("indoors", "indoor")) else None,
+        "clarification_question": "What would you like help with in Meghalaya?" if intent == "clarification" else "",
+    }
     return {
         "intent": decision_data["intent"],
         "route_decision": decision_data,

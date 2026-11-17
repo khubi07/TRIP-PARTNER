@@ -34,24 +34,8 @@ class _FakeChatModel:
         return _FakeStructuredModel(self.response)
 
 
-def test_route_node_accepts_structured_dictionary(monkeypatch):
-    monkeypatch.setattr(
-        assistant_graph_module,
-        "get_chat_model",
-        lambda: _FakeChatModel(
-            {
-                "intent": "weather",
-                "retrieval_query": "",
-                "area": None,
-                "weather_location": "Sohra",
-                "category": None,
-                "setting": None,
-                "clarification_question": "",
-            }
-        ),
-    )
-
-    result = route_request({"query": "Weather tomorrow?", "trip_context": {}})
+def test_route_node_routes_weather_without_a_model_call():
+    result = route_request({"query": "Weather tomorrow in Sohra?", "trip_context": {}})
 
     assert result["intent"] == "weather"
     assert result["route_decision"]["weather_location"] == "Sohra"

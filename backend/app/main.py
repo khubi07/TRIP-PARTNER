@@ -1,4 +1,5 @@
 import json
+import logging
 from uuid import uuid4
 from pathlib import Path
 from typing import Annotated, Literal
@@ -22,6 +23,8 @@ from app.schemas.weather_event import (
 from app.services.place_search import place_search
 from app.services.trip_store import trip_store
 from app.services.weather import WeatherServiceError, weather_service
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="tripPartner API",
@@ -164,7 +167,8 @@ def chat(request: ChatRequest) -> ChatResponse:
     except WeatherServiceError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except Exception as exc:
-        # Keep provider/network details out of API responses and logs by default.
+        # Keep provider details out of the client response; retain server diagnostics.
+        logger.exception("Assistant chat failed (%s)", type(exc).__name__)
         raise HTTPException(
             status_code=502,
             detail="The AI provider request failed. Please retry shortly.",

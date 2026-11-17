@@ -23,8 +23,8 @@ def test_valid_itinerary_uses_only_retrieved_places_and_trip_dates(monkeypatch, 
                 "message": "A flexible two-stop day.",
                 "cited_place_ids": [],
                 "itinerary_items": [
-                    {"date": "2027-01-16", "place_id": "mawsmai-cave", "start_time": "09:00:00", "end_time": "11:00:00"},
-                    {"date": "2027-01-16", "place_id": "nohkalikai-falls", "start_time": "11:00:00", "end_time": "13:00:00"},
+                    {"date": "2027-01-16", "place_id": "mawsmai-cave", "start_time": "09:00:00Z", "end_time": "11:00:00Z"},
+                    {"date": "2027-01-16", "place_id": "nohkalikai-falls", "start_time": "11:00:00Z", "end_time": "13:00:00Z"},
                 ],
             }
         ),
